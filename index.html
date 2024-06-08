@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="style.css">
+    
+
+    
+
+</head>
+<body>
+
+    <div class="container">
+        <h2>Notes App</h2>
+        <textarea id="noteInput" placeholder="Type your note here..."></textarea>
+        <button onclick="saveNote()">Save Note</button>
+        <div id="noteList"></div>
+    </div>
+
+    
+
+
+
+
+
+    <script>
+
+
+        function saveNote() {
+        var note = document.getElementById('noteInput').value;
+        if (note.trim() === '') {
+            alert('Please enter a note before saving.');
+            return;
+        }
+        var timestamp = new Date().getTime(); // Unique timestamp for each note
+        var noteObj = {
+            id: timestamp,
+            content: note
+        };
+        var savedNotes = JSON.parse(localStorage.getItem('notes')) || [];
+        savedNotes.push(noteObj);
+        localStorage.setItem('notes', JSON.stringify(savedNotes));
+        displayNotes();
+        document.getElementById('noteInput').value = ''; // Clear the input field
+    }
+
+    // Function to display saved notes
+    function displayNotes() {
+        var notes = JSON.parse(localStorage.getItem('notes')) || [];
+        var noteList = document.getElementById('noteList');
+        noteList.innerHTML = '';
+        notes.forEach(function(note) {
+            var noteElement = document.createElement('div');
+            noteElement.classList.add('note');
+            noteElement.innerHTML = `
+                <p>${note.content}</p>
+                <button onclick="deleteNote(${note.id})">Delete</button>
+            `;
+            noteList.appendChild(noteElement);
+        });
+    }
+
+    // Function to delete a note
+    function deleteNote(noteId) {
+        var savedNotes = JSON.parse(localStorage.getItem('notes')) || [];
+        var updatedNotes = savedNotes.filter(function(note) {
+            return note.id !== noteId;
+        });
+        localStorage.setItem('notes', JSON.stringify(updatedNotes));
+        displayNotes();
+    }
+
+    // Display saved notes when the page loads
+    displayNotes();
+
+
+    </script>
+</body>
+</html>
